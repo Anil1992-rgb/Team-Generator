@@ -11,14 +11,9 @@ const readFileAsync = util.promisify(fs.readFile);
 
 
 
-function prompUser() {
-    return inquirer.prompt(questions)
-}
 
-function writeToFile(fileName, questions) {
-    writeFileAsync(fileName, questions)
+//writeFileAsync(fileName, questions)
 
-}
 
 
 
@@ -43,38 +38,49 @@ function init() {
         return inquirer.prompt(chooseEmployee)
             .then(function(answers) {
                 if (answers.continue.toLowerCase() === "y") {
-                    if (answers.choose === "Engineer") {
-                        createEngineer();
-                    }
-                    if (answers.choose === "Intern") {
-                        createIntern();
-                    }
+                    chooseYes();
                 }
                 if (answers.continue.toLowerCase() === "n") {
-                    console.log("no");
-                    // process.kill();
+                    process.kill(process.pid);
                 }
             })
     };
 
-    // function chooseNo() {
-    //     const chooseNope = [{
-    //         type: "list",
-    //         name: "choose",
-    //         message: "Choose an employee",
-    //         choices: [
-    //             "Engineer",
-    //             "Intern"
+    function chooseYes() {
+        const chooseYep = [{
+            type: "list",
+            name: "choose",
+            message: "Choose an employee",
+            choices: [
+                "Engineer",
+                "Intern"
 
-    //         ]
-    //     }]
-    // }
+            ]
+        }]
+        return inquirer.prompt(chooseYep)
+            .then(function(answers) {
+                if (answers.choose === "Engineer") {
+                    createEngineer();
+                }
+                if (answers.choose === "Intern") {
+                    createIntern();
+                }
+            })
+    }
 
     function generateQuestions(employeeType) {
         const questions = [{
                 type: "input",
                 name: "name",
                 message: "What is your name?",
+                validate: (input) => {
+                    var letters = /^[A-Za-z]+$/;
+                    if (input.match(letters)) {
+                        return true;
+                    } else {
+                        return "Use only letters please";
+                    }
+                }
 
             },
 
@@ -82,30 +88,67 @@ function init() {
                 type: "input",
                 name: "ID",
                 message: "What is your ID?",
+                validate: (input) => {
+                    var letters = /^[0-9]+$/;
+                    if (input.match(letters)) {
+                        return true;
+                    } else {
+                        return "Use only numbers please";
+                    }
+                }
             },
 
             {
                 type: "input",
                 name: "Email",
                 message: "What is your email",
+                validate: (input) => {
+                    var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+                    if (input.match(re)) {
+                        return true;
+                    } else {
+                        return "Not a valid email address";
+                    }
+                }
             },
         ]
         const managerQuestion = {
             type: "input",
             name: "officeNumber",
             message: "What is your Office Number",
+            validate: (input) => {
+                if (input.trim() !== "") {
+                    return true;
+                } else {
+                    return "Enter a valid office number";
+                }
+            }
         }
 
         const EngineerQuestion = {
             type: "input",
             name: "github",
             message: "What is your github username?",
+            validate: (input) => {
+                if (input.trim() !== "") {
+                    return true;
+                } else {
+                    return "Enter a valid username";
+                }
+            }
         }
 
         const InternQuestion = {
             type: "input",
             name: "school",
             message: "What is the name of your school?",
+            validate: (input) => {
+                if (input.trim() !== "") {
+                    return true;
+                } else {
+                    return "Enter a valid school name";
+                }
+            }
         }
 
         switch (employeeType) {
