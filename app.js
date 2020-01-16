@@ -7,7 +7,7 @@ const Intern = require("./lib/Intern");
 const generateHTML = require("./lib/generateHTML");
 const fs = require("fs");
 const employeeArr = [];
-const loopandwrite = require("./lib/loopandwrite");
+const mapArr = require("./lib/mapArr");
 
 function init() {
     function createManager() {
@@ -16,7 +16,6 @@ function init() {
         return inquirer.prompt(questions)
             .then(function(answers) {
                 const manager = new Manager(answers.name, answers.id, answers.email, answers.officeNumber);
-                console.log(manager);
                 employeeArr.push(manager);
                 choose();
             })
@@ -34,7 +33,7 @@ function init() {
                     chooseYes();
                 }
                 if (answers.continue.toLowerCase() === "n") {
-                    loopandwrite(employeeArr);
+                    mapArr(employeeArr);
                 }
             })
     };
