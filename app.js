@@ -1,33 +1,26 @@
-const Employee = require("./Employee");
-const Manager = require("./Manager");
-const Engineer = require("./Engineer");
-const Intern = require("./Intern");
 const inquirer = require("inquirer");
-//const generateHTML = require("./generateHTML");
+const jest = require("jest");
+const Employee = require("./lib/Employee");
+const Manager = require("./lib/Manager");
+const Engineer = require("./lib/Engineer");
+const Intern = require("./lib/Intern");
+const generateHTML = require("./lib/generateHTML");
 const fs = require("fs");
-const util = require("util");
-const writeFileAsync = util.promisify(fs.writeFile);
-const readFileAsync = util.promisify(fs.readFile);
-
-
-
-
-//writeFileAsync(fileName, questions)
-
-
-
+const employeeArr = [];
+const loopandwrite = require("./lib/loopandwrite");
 
 function init() {
-
     function createManager() {
         const questions = generateQuestions("Manager")
 
         return inquirer.prompt(questions)
-            .then(function() {
+            .then(function(answers) {
+                const manager = new Manager(answers.name, answers.id, answers.email, answers.officeNumber);
+                console.log(manager);
+                employeeArr.push(manager);
                 choose();
             })
     };
-
 
     function choose() {
         const chooseEmployee = [{
@@ -41,7 +34,7 @@ function init() {
                     chooseYes();
                 }
                 if (answers.continue.toLowerCase() === "n") {
-                    process.kill(process.pid);
+                    loopandwrite(employeeArr);
                 }
             })
     };
@@ -54,7 +47,6 @@ function init() {
             choices: [
                 "Engineer",
                 "Intern"
-
             ]
         }]
         return inquirer.prompt(chooseYep)
@@ -78,29 +70,28 @@ function init() {
                     if (input.match(letters)) {
                         return true;
                     } else {
-                        return "Use only letters please";
+                        return "Letters only!";
                     }
                 }
-
             },
 
             {
                 type: "input",
-                name: "ID",
-                message: "What is your ID?",
+                name: "id",
+                message: "What is your ID number?",
                 validate: (input) => {
                     var letters = /^[0-9]+$/;
                     if (input.match(letters)) {
                         return true;
                     } else {
-                        return "Use only numbers please";
+                        return "Numbers only!";
                     }
                 }
             },
 
             {
                 type: "input",
-                name: "Email",
+                name: "email",
                 message: "What is your email",
                 validate: (input) => {
                     var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
@@ -112,15 +103,17 @@ function init() {
                 }
             },
         ]
+
         const managerQuestion = {
             type: "input",
             name: "officeNumber",
             message: "What is your Office Number",
             validate: (input) => {
-                if (input.trim() !== "") {
+                var letters = /^[0-9]+$/;
+                if (input.match(letters)) {
                     return true;
                 } else {
-                    return "Enter a valid office number";
+                    return "Numbers only!";
                 }
             }
         }
@@ -133,7 +126,7 @@ function init() {
                 if (input.trim() !== "") {
                     return true;
                 } else {
-                    return "Enter a valid username";
+                    return "Must enter a username";
                 }
             }
         }
@@ -146,7 +139,7 @@ function init() {
                 if (input.trim() !== "") {
                     return true;
                 } else {
-                    return "Enter a valid school name";
+                    return "Must enter a school name";
                 }
             }
         }
@@ -161,26 +154,18 @@ function init() {
             case "Manager":
                 questions.push(managerQuestion);
                 break;
-
         }
         return questions;
-
     }
-
 
     function createEngineer() {
         const questions = generateQuestions("Engineer")
-
-
-
         return inquirer.prompt(questions)
             .then(function(answers) {
                 choose()
+                const newEngineer = new Engineer(answers.name, answers.id, answers.email, answers.github);
+                employeeArr.push(newEngineer);
             })
-
-        //const engineer = new Engineer(questions.name, questions.id, questions.email, questions.github);
-
-
     };
 
     function createIntern() {
@@ -189,10 +174,10 @@ function init() {
         return inquirer.prompt(questions)
             .then(function(answers) {
                 choose()
+                const newIntern = new Intern(answers.name, answers.id, answers.email, answers.school);
+                employeeArr.push(newIntern);
             })
     };
-
     createManager();
 };
-
 init();
