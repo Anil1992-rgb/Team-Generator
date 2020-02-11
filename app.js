@@ -11,6 +11,7 @@ const mapArr = require("./lib/mapArr");
 
 function init() {
     function createManager() {
+        // generates first set of questions which is only for manager and there can only be one manager.
         const questions = generateQuestions("Manager")
 
         return inquirer.prompt(questions)
@@ -20,7 +21,7 @@ function init() {
                 choose();
             })
     };
-
+    // runs after you created a manager and when you create a new employee, engineer and intern both use this.
     function choose() {
         const chooseEmployee = [{
             type: "input",
@@ -37,7 +38,7 @@ function init() {
                 }
             })
     };
-
+    // if choosed yes will run this and ask if you want an engineer or intern
     function chooseYes() {
         const chooseYep = [{
             type: "list",
@@ -50,15 +51,17 @@ function init() {
         }]
         return inquirer.prompt(chooseYep)
             .then(function(answers) {
+                //if choosen Engineer, then createEngineer
                 if (answers.choose === "Engineer") {
                     createEngineer();
                 }
+                //if choosen Intern, then createIntern
                 if (answers.choose === "Intern") {
                     createIntern();
                 }
             })
     }
-
+    // questions to be asked for both engineer and intern
     function generateQuestions(employeeType) {
         const questions = [{
                 type: "input",
@@ -102,7 +105,7 @@ function init() {
                 }
             },
         ]
-
+        // question to be asked only for manager
         const managerQuestion = {
             type: "input",
             name: "officeNumber",
@@ -116,7 +119,7 @@ function init() {
                 }
             }
         }
-
+        // question to be asked only for engineer
         const EngineerQuestion = {
             type: "input",
             name: "github",
@@ -129,7 +132,7 @@ function init() {
                 }
             }
         }
-
+        // question to be asked only for intern
         const InternQuestion = {
             type: "input",
             name: "school",
@@ -142,7 +145,7 @@ function init() {
                 }
             }
         }
-
+        // switches between questions based on what you choose
         switch (employeeType) {
             case "Engineer":
                 questions.push(EngineerQuestion);
@@ -156,7 +159,7 @@ function init() {
         }
         return questions;
     }
-
+    // creatas engineer based on answers
     function createEngineer() {
         const questions = generateQuestions("Engineer")
         return inquirer.prompt(questions)
@@ -166,7 +169,7 @@ function init() {
                 employeeArr.push(newEngineer);
             })
     };
-
+    // creates intern based on answers
     function createIntern() {
         const questions = generateQuestions("Intern")
 
